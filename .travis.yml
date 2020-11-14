@@ -1,0 +1,14 @@
+matrix:
+    include:
+        - language: python
+          cache: pip
+          python: "3.8.1"
+          install:
+            - pip install pipenv --upgrade
+            - pipenv sync -d
+          before_script:
+            - python --version
+          script:
+            - black --check . src/
+            - flake8
+            - pre-commit run --all-files
