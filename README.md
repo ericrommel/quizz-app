@@ -40,7 +40,7 @@ improvement over time.
 ## About
 
 This project is part of [Exponential Ventures'](http://www.exponentialventures.com) challenge for their Full-Stack
-hire process sent in November 2020. The whole project includes to create the front-end part using React. 
+hire process sent in November 2020. The whole project includes to create the front-end part using React.
 
 ## Author
 
