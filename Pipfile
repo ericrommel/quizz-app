@@ -12,6 +12,12 @@ pre-commit = "*"
 flask = "*"
 flask-bootstrap = "*"
 colorlog = "*"
+flask-sqlalchemy = "*"
+flask-login = "*"
+flask-migrate = "*"
+flask-wtf = "*"
+wtforms = "*"
+email-validator = "*"
 
 [requires]
 python_version = "3.8"
