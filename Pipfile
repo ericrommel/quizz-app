@@ -11,6 +11,7 @@ black = "*"
 pre-commit = "*"
 flask = "*"
 flask-bootstrap = "*"
+colorlog = "*"
 
 [requires]
 python_version = "3.8"
