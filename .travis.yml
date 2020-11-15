@@ -9,6 +9,6 @@ matrix:
           before_script:
             - python --version
           script:
-            - black --check . backend/src/
+            - black --line-length 120 --check . backend/src/
             - flake8
             - pre-commit run --all-files
