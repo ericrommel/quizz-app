@@ -9,6 +9,8 @@ verify_ssl = true
 flake8 = "*"
 black = "*"
 pre-commit = "*"
+flask = "*"
+flask-bootstrap = "*"
 
 [requires]
 python_version = "3.8"
