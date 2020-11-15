@@ -1,10 +1,13 @@
 from config import app_config
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
 from log import Log
 from src.errors import page_not_found, internal_server_error, bad_request, unauthorized, forbidden, method_not_allowed
 
 LOGGER = Log("quizz-app").get_logger(logger_name="app")
+
+db = SQLAlchemy()
 
 
 def create_app(config_name):
@@ -25,8 +28,11 @@ def create_app(config_name):
 
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile("config.py", silent=True)
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # avoid FSADeprecationWarning
 
     Bootstrap(app)
+    db.init_app(app)
+
     from .home import home as home_bprint
 
     app.register_blueprint(home_bprint)

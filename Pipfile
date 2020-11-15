@@ -12,6 +12,7 @@ pre-commit = "*"
 flask = "*"
 flask-bootstrap = "*"
 colorlog = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.8"
