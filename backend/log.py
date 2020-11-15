@@ -12,9 +12,7 @@ except ImportError:
 
 class Log:
     def __init__(self, logfile_name):
-        self.log_file_formatter = logging.Formatter(
-            "%(asctime)s %(levelname)-8s | %(message)s"
-        )
+        self.log_file_formatter = logging.Formatter("%(asctime)s %(levelname)-8s | %(message)s")
         self.log_file = logfile_name
         self.log_level = logging.DEBUG
 
