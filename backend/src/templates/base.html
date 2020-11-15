@@ -13,13 +13,30 @@
           <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                   <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
               </button>
               <a class="navbar-brand topnav" href="{{ url_for('home.homepage') }}">Quizz App</a>
           </div>
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                  {% if current_user.is_admin %}
+                    <li><a href="{{ url_for('home.admin_dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('admin.list_questions') }}">Questions</a></li>
+                    <li><a href="{{ url_for('admin.list_users') }}">Users</a></li>
+                  {% else %}
+                    <li><a href="{{ url_for('home.homepage') }}">Dashboard</a></li>
+                  {% endif %}
+                  <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                  <li><a><i class="fa fa-user"></i>  Hi, {{ current_user.username }}!</a></li>
+                {% else %}
                   <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
+                  <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+                  <li><a href="{{ url_for('auth.login') }}">Login</a></li>
                   <li><a href="{{ url_for('about.about_page') }}">About</a></li>
+                {% endif %}
               </ul>
           </div>
         </div>
@@ -36,6 +53,15 @@
                     <ul class="list-inline">
                         <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
                         <li class="footer-menu-divider">⋅</li>
+                        {% if current_user.is_authenticated %}
+                          <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                          <li class="footer-menu-divider">⋅</li>
+                        {% else %}
+                          <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+                          <li class="footer-menu-divider">⋅</li>
+                          <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                          <li class="footer-menu-divider">⋅</li>
+                        {% endif %}
                         <li><a href="{{ url_for('about.about_page') }}">About</a></li>
                     </ul>
                     <p class="copyright text-muted small">Copyright © 2020. All Rights Reserved</p>
