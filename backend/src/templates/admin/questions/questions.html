@@ -1,0 +1,70 @@
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %} Questions {% endblock %}
+{% block body %}
+<div class="content-section">
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <br/>
+        {{ utils.flashed_messages() }}
+        <br/>
+        <h1 style="text-align:center;">Questions</h1>
+        {% if questions %}
+          <hr class="intro-divider">
+          <div class="center">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th width="auto"> Description </th>
+                  <th width="auto"> Correct Answer </th>
+                  <th width="auto"> False Answer 1 </th>
+                  <th width="auto"> False Answer 2 </th>
+                  <th width="auto"> False Answer 3 </th>
+                  <th width="auto"> Level </th>
+                  <th width="auto"> Edit </th>
+                  <th width="auto"> Delete </th>
+                </tr>
+              </thead>
+              <tbody>
+              <!-- ToDo: Pagination should be implemented here -->
+              {% for question in questions %}
+                <tr>
+                  <td> {{ question.description }} </td>
+                  <td> {{ question.correct_answer }} </td>
+                  <td> {{ question.false_answer_1 }} </td>
+                  <td> {{ question.false_answer_2 }} </td>
+                  <td> {{ question.false_answer_3 }} </td>
+                  <td> {{ question.level }} </td>
+                  <td>
+                    <a href="{{ url_for('admin.edit_question', id=question.id) }}">
+                      <i class="fa fa-pencil"></i> Edit
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url_for('admin.delete_question', id=question.id) }}">
+                      <i class="fa fa-trash"></i> Delete
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div style="text-align: center">
+        {% else %}
+          <div style="text-align: center">
+            <h3> No questions have been added yet. </h3>
+            <hr class="intro-divider">
+        {% endif %}
+          <a href="{{ url_for('admin.add_question') }}" class="btn btn-default btn-lg">
+            <i class="fa fa-plus"></i>
+            Add Question
+          </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
