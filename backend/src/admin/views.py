@@ -184,7 +184,7 @@ def edit_user(id):
         user.fullname = form.fullname.data
         user.username = form.username.data
         user.email = form.email.data
-        user.is_admin = bool(form.is_admin.data)
+        user.is_admin = True if form.is_admin.data == "True" else False
 
         try:
             # edit user in the database
@@ -200,7 +200,7 @@ def edit_user(id):
     form.fullname.data = user.fullname
     form.username.data = user.username
     form.email.data = user.email
-    form.is_admin.data = user.is_admin
+    form.is_admin.data = str(user.is_admin)
     return render_template(
         "admin/users/user.html",
         action="Edit",
