@@ -14,7 +14,7 @@ from config import app_config
 from log import Log
 from src.errors import page_not_found, internal_server_error, bad_request, unauthorized, forbidden, method_not_allowed
 
-LOGGER = Log("quizz-app").get_logger(logger_name="app")
+LOGGER = Log("quiz-app").get_logger(logger_name="app")
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -63,13 +63,13 @@ def create_app(config_name):
 
     migrate = Migrate(app, db)
 
-    from .admin import admin as admin_bprint
-
-    app.register_blueprint(admin_bprint)
-
     from .about import about as about_bprint
 
     app.register_blueprint(about_bprint)
+
+    from .admin import admin as admin_bprint
+
+    app.register_blueprint(admin_bprint)
 
     from .auth import auth as auth_bprint
 
@@ -78,5 +78,9 @@ def create_app(config_name):
     from .home import home as home_bprint
 
     app.register_blueprint(home_bprint)
+
+    from .user import user as user_bprint
+
+    app.register_blueprint(user_bprint)
 
     return app

@@ -1,0 +1,42 @@
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %} User Detail {% endblock %}
+{% block body %}
+<div class="content-section">
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <br/>
+        {{ utils.flashed_messages() }}
+        <br/>
+        <h1 style="text-align:center;">User</h1>
+          <hr class="intro-divider">
+          <div class="center">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th width="30%"> Fullname </th>
+                  <th width="15%"> Username </th>
+                  <th width="25%"> E-mail </th>
+                  <th width="10%"> Edit </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td> {{ user.fullname }} </td>
+                  <td> {{ user.username }} </td>
+                  <td> {{ user.email }} </td>
+                  <td>
+                    <a href="{{ url_for('user.edit_user', id=user.id) }}">
+                      <i class="fa fa-pencil"></i> Edit
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

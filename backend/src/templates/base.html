@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{{ title }} | Quizz App</title>
+    <title>{{ title }} | Quiz App</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
@@ -17,7 +17,7 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand topnav" href="{{ url_for('home.homepage') }}">Quizz App</a>
+              <a class="navbar-brand topnav" href="{{ url_for('home.homepage') }}">Quiz App</a>
           </div>
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav navbar-right">
@@ -28,6 +28,7 @@
                     <li><a href="{{ url_for('admin.list_users') }}">Users</a></li>
                   {% else %}
                     <li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('user.user_details') }}">Edit details</a></li>
                   <li><a href="{{ url_for('home.dashboard') }}">Check your knowledge</a></li>
                   {% endif %}
                   <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>

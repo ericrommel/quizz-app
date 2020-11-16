@@ -10,7 +10,7 @@ class QuestionForm(FlaskForm):
     Form for an admin to add or edit a question
     """
 
-    LOGGER.info("Generate the question form")
+    LOGGER.info("Generate the question form from admin")
     description = StringField("Problem", validators=[DataRequired()])
     correct_answer = StringField("Correct Answer", validators=[DataRequired()])
     subject = StringField("Subject related", validators=[DataRequired()])
@@ -20,3 +20,16 @@ class QuestionForm(FlaskForm):
     levels = ["Beginner", "Easy", "Normal", "Hard", "Very Hard", "Fiendish"]
     level = SelectField(u"Level", choices=levels)  # ToDo: Create a table for Levels
     submit = SubmitField("Submit")
+
+
+class UserForm(FlaskForm):
+    """
+    Form for an admin to edit a user
+    """
+
+    LOGGER.info("Generate the user form from admin")
+    fullname = StringField("Full name", validators=[DataRequired()])
+    username = StringField("Username", validators=[DataRequired()])
+    email = StringField("E-mail", validators=[DataRequired()])
+    is_admin = SelectField(u"Is admin?", choices=["True", "False"])
+    submit = SubmitField("Edit")
