@@ -1,8 +1,10 @@
-from flask import flash, redirect, render_template, url_for
+import json
+
+from flask import abort, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 
 from . import auth
-from .. import db
+from .. import db, LOGGER
 from .forms import LoginForm, SignUpForm
 from ..models import User
 
@@ -14,13 +16,28 @@ def signup():
     Add a user to the database through the sign up form
     """
 
-    form = SignUpForm()
-    if form.validate_on_submit():
+    form = request.get_json() if request.get_json() else SignUpForm()
+
+    if request.method == "POST":
+        if not request.get_json():
+            if form.validate_on_submit():
+                form = json.loads(
+                    json.dumps(
+                        {
+                            "email": form.email.data,
+                            "username": form.username.data,
+                            "fullname": form.fullname.data,
+                            "password": form.password.data,
+                        }
+                    )
+                )
+
         user = User(
-            email=form.email.data,
-            username=form.username.data,
-            fullname=form.fullname.data,
-            password=form.password.data,
+            email=form.get("email"),
+            username=form.get("username"),
+            fullname=form.get("fullname"),
+            password=form.get("password"),
+            is_admin=form.get("is_admin", False),
         )
 
         # add user to the database
@@ -30,22 +47,24 @@ def signup():
 
         # redirect to the login page
         return redirect(url_for("auth.login"))
-
-    # load registration template
-    return render_template("auth/register.html", form=form, title="Sign Up")
+    elif request.method == "GET":
+        # load registration template
+        return render_template("auth/register.html", form=form, title="Sign Up")
+    else:
+        abort(405)
 
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     """
     Handle requests to the /login route
-    Log an employees in through the sign in form
+    Log an users in through the sign in form
     """
 
     form = LoginForm()
     if form.validate_on_submit():
 
-        # Check if the employees exists in the DB and if the password entered matches the password in the DB
+        # Check if the users exists in the DB and if the password entered matches the password in the DB
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.check_password(form.password.data):
             # Log user in
@@ -55,7 +74,7 @@ def login():
             if user.is_admin:
                 return redirect(url_for("home.admin_dashboard"))  # ToDo: Create an admin dashboard
             else:
-                return redirect(url_for("home.homepage"))  # ToDo: Create a user dashboard
+                return redirect(url_for("home.dashboard"))  # ToDo: Create a user dashboard
         # When login details are incorrect
         else:
             flash("Invalid email or password.")
