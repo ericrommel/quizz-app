@@ -17,7 +17,7 @@ class QuestionForm(FlaskForm):
     false_answer_1 = StringField("Wrong Answer 1", validators=[DataRequired()])
     false_answer_2 = StringField("Wrong Answer 2", validators=[DataRequired()])
     false_answer_3 = StringField("Wrong Answer 3", validators=[DataRequired()])
-    levels = ["Beginner", "Easy", "Normal", "Hard", "Very Hard", "Fiendish"]
+    levels = [(1, "Beginner"), (1.5, "Easy"), (2, "Normal"), (2.5, "Hard"), (3, "Very Hard"), (5, "Fiendish")]
     level = SelectField(u"Level", choices=levels)  # ToDo: Create a table for Levels
     submit = SubmitField("Submit")
 
