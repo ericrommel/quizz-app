@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, RadioField
+from wtforms import StringField, SubmitField, SelectField, RadioField, HiddenField
 from wtforms.validators import DataRequired, InputRequired, Email
 
 from src import LOGGER
@@ -39,4 +39,5 @@ class SolveQuizForm(FlaskForm):
 
     LOGGER.info("Generate the question form for the quiz")
     question = RadioField(choices=[], validators=[InputRequired()])
+    times_up = HiddenField("times_up")
     submit = SubmitField("Next")

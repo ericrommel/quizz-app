@@ -106,14 +106,14 @@ def generate_a_quiz():
             flash("Error: There was an error and this question couldn't be added. Check each item and try again")
 
         # redirect to questions page
-        return redirect(url_for("user.solve_a_quiz", id=quiz.id, question_id=0))
+        return redirect(url_for("user.solve_a_quiz", quiz_id=quiz.id, question_id=0))
 
     return render_template("quiz/set-quiz.html", form=form, title="Choose your challenge")
 
 
-@user.route("/users/quizzes/<int:id>/question/<int:question_id>", methods=["GET", "POST"])
+@user.route("/users/quizzes/<int:quiz_id>/question/<int:question_id>", methods=["GET", "POST"])
 @login_required
-def solve_a_quiz(id, question_id):
+def solve_a_quiz(quiz_id, question_id):
     """
     Generate a quiz to solve
     """
@@ -122,41 +122,47 @@ def solve_a_quiz(id, question_id):
 
     LOGGER.info("Solve a quiz")
 
-    quiz_obj: Quiz = Quiz.query.get_or_404(id)
+    quiz_obj: Quiz = Quiz.query.get_or_404(quiz_id)
 
     questions: list = quiz_obj.questions
 
-    q = question_id
-
-    if len(questions) == q:
-        result = round(float(result / q), 2)
-        return redirect(url_for("user.quiz_result", user_id=id, final_result=result))
-
     form = SolveQuizForm()
+
+    if len(questions) == question_id:
+        result = round(float(result / len(questions)), 2)
+        return redirect(url_for("user.quiz_result", user_id=current_user.id, final_result=result))
+
     choices = [
-        questions[q].correct_answer,
-        questions[q].false_answer_1,
-        questions[q].false_answer_2,
-        questions[q].false_answer_3,
+        questions[question_id].correct_answer,
+        questions[question_id].false_answer_1,
+        questions[question_id].false_answer_2,
+        questions[question_id].false_answer_3,
     ]
 
     random.shuffle(choices)
 
-    form.question.label = questions[q].description
+    form.question.label = questions[question_id].description
     form.question.choices = choices
 
     if form.validate_on_submit():
-        LOGGER.info("Check and save the answer by the user")
-        if form.question.data.strip().lower() == questions[q].correct_answer.strip().lower():
-            result += 1 + questions[q].level
+        LOGGER.info(f"Check and save the answer by the user. Solved in {form.times_up.data}s")
+        if form.question.data.strip().lower() == questions[question_id].correct_answer.strip().lower():
+            result += (1 + questions[question_id].level) * int(form.times_up.data)
 
-        q += 1
-        return redirect(url_for("user.solve_a_quiz", id=id, question_id=q))
+        question_id += 1
+        return redirect(url_for("user.solve_a_quiz", quiz_id=quiz_id, question_id=question_id))
 
-    return render_template("quiz/quiz.html", question=questions[q], form=form, title=f"Question {q+1}")
+    return render_template(
+        "quiz/quiz.html",
+        question=questions[question_id],
+        quiz_id=quiz_id,
+        question_id=question_id,
+        form=form,
+        title=f"Question {question_id+1}",
+    )
 
 
-@user.route("/users/<int:user_id>/results/", methods=["GET", "POST"])
+@user.route("/users/<int:user_id>/results/<float:final_result>", methods=["GET", "POST"])
 @login_required
 def quiz_result(user_id, final_result):
     """
@@ -164,9 +170,9 @@ def quiz_result(user_id, final_result):
     """
 
     global result
-    LOGGER.debug(f"User: {user_id} - Result: {result}")
+    LOGGER.debug(f"User: {user_id} - Result: {final_result}")
 
     result = 0
 
-    LOGGER.debug(f"Result: {result}")
+    LOGGER.debug(f"Result: {final_result}")
     return render_template("home/index.html")
