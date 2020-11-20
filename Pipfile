@@ -18,6 +18,8 @@ flask-migrate = "*"
 flask-wtf = "*"
 wtforms = "*"
 email-validator = "*"
+openpyxl = "*"
+xlrd = "*"
 
 [requires]
 python_version = "3.8"

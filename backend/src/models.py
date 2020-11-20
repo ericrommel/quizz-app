@@ -54,7 +54,7 @@ class Question(db.Model):
     __tablename__ = "questions"
 
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(500), index=True, unique=False)
+    description = db.Column(db.String(500), index=True, unique=True)
     correct_answer = db.Column(db.String(500), index=True, unique=False)
     subject = db.Column(db.String(100), index=True, unique=False)
     false_answer_1 = db.Column(
