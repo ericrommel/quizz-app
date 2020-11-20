@@ -1,0 +1,43 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %} Solve Quiz {% endblock %}
+{% block body %}
+<div class="content-section">
+ <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <div class="center">
+            <div id="countdown"></div>
+            <span class="timer" id="timer">15s</span>
+            <progress value="15" max="15" id="progressBar" class="progress progress--countdown"></progress>
+            <script type="text/javascript">
+                const timerElement = document.getElementById("timer");
+                const progressBar = document.getElementById("progressBar");
+                let timerCounter = progressBar.max;
+                const interval = setInterval(() => {
+                    if (timerCounter <= 1) {
+                        window.location.href = "{{ url_for("user.solve_a_quiz", quiz_id=quiz_id, times_up=0, question_id=question_id + 1) }}";
+                        clearInterval(interval);
+                    }
+
+                    timerCounter = timerCounter - 1;
+                    document.getElementById('times_up').value = timerCounter;
+                    timerElement.innerText = timerCounter + "s";
+                    progressBar.value = timerCounter;
+                }, 1000);
+            </script>
+
+            <h1> {{ question.description }} </h1>
+            <br/>
+            <form class="form form-horizontal" method="post" role="form">
+              {{ form.hidden_tag() }}
+              {{ wtf.form_errors(form, hiddens="only") }}
+              {{ wtf.form_field(form.question) }}
+              {{ wtf.form_field(form.submit) }}
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
