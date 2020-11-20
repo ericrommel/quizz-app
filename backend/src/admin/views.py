@@ -64,10 +64,13 @@ def list_questions():
 
 
 @admin.route("/questions/bulk", methods=["POST"])
+@login_required()
 def add_questions_bulk():
     """
     Add questions in bulk
     """
+
+    check_admin()
 
     LOGGER.info("Import questions in bulk from a excel file")
     data_file = pathlib.Path(current_dir, "static", "sample_questions.xlsx")
