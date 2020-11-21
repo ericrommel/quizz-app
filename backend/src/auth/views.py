@@ -61,12 +61,17 @@ def login():
     Log an users in through the sign in form
     """
 
+    LOGGER.debug("Try sign in")
+    req = request.get_json() if request.get_json() else request.form
+
     form = LoginForm()
-    if form.validate_on_submit():
+
+    if request.method == "POST":
 
         # Check if the users exists in the DB and if the password entered matches the password in the DB
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.check_password(form.password.data):
+            LOGGER.debug("Login successful")
             # Log user in
             login_user(user)
 
@@ -78,6 +83,7 @@ def login():
         # When login details are incorrect
         else:
             flash("Invalid email or password.")
+            return render_template("auth/login.html", form=form, title="Login"), 401
 
     # load login template
     return render_template("auth/login.html", form=form, title="Login")

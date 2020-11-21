@@ -64,7 +64,7 @@ def list_questions():
 
 
 @admin.route("/questions/bulk", methods=["POST"])
-@login_required()
+@login_required
 def add_questions_bulk():
     """
     Add questions in bulk
