@@ -29,7 +29,6 @@ class Score(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey("quizzes.id"))
     results = db.Column(PickleType)
-    attempts = db.Column(db.Integer)
 
 
 class Quiz(db.Model):

@@ -7,9 +7,18 @@ from sqlalchemy import func
 from . import user
 from .forms import UserForm, SetForAQuizForm, SolveQuizForm
 from .. import db, LOGGER
-from ..models import User, Question, Quiz
+from ..models import User, Question, Quiz, Score
 
-results: dict = {"fails": [], "points": 0.0}
+results: dict = {"passes": [], "points": 0.0}
+
+
+def set_results(values: dict) -> None:
+    results["passes"] = values.get("passes")
+    results["points"] = values.get("points")
+
+
+def get_results() -> dict:
+    return results
 
 
 @user.route("/users", methods=["GET", "POST"])
@@ -117,7 +126,7 @@ def solve_a_new_quiz(quiz_id, question_id):
     Generate a quiz to solve
     """
 
-    global results
+    values: dict = get_results()
 
     LOGGER.info("Solve a quiz")
 
@@ -128,8 +137,9 @@ def solve_a_new_quiz(quiz_id, question_id):
     form = SolveQuizForm()
 
     if len(questions) == question_id:
-        results["points"] = round(results["points"] / float(len(questions)), 2)
-        return redirect(url_for("user.quiz_result", quiz_id=quiz_id, final_result=results))
+        values["points"] = round(values["points"] / float(len(questions)), 2)
+        set_results(values)
+        return redirect(url_for("user.quiz_result", quiz_id=quiz_id))
 
     choices = [
         questions[question_id].correct_answer,
@@ -146,9 +156,9 @@ def solve_a_new_quiz(quiz_id, question_id):
     if form.validate_on_submit():
         LOGGER.info(f"Check and save the answer by the user. Solved in {form.times_up.data}s")
         if form.question.data.strip().lower() == questions[question_id].correct_answer.strip().lower():
-            results["points"] += (1 + questions[question_id].level) * int(form.times_up.data)
-            results["passes"].append(form.question.data.strip())
-            LOGGER.debug(f"Point: {results}")
+            values["points"] += (1 + questions[question_id].level) * int(form.times_up.data)
+            values["passes"].append(form.question.data.strip())
+            set_results(values)
 
         question_id += 1
         return redirect(url_for("user.solve_a_new_quiz", quiz_id=quiz_id, question_id=question_id))
@@ -163,53 +173,58 @@ def solve_a_new_quiz(quiz_id, question_id):
     )
 
 
-@user.route("/users/quizzes/quiz_id/results/<float:final_result>", methods=["GET", "POST"])
+@user.route("/users/quizzes/<int:quiz_id>/results", methods=["GET", "POST"])
 @login_required
-def quiz_result(quiz_id, final_result):
+def quiz_result(quiz_id):
     """
     Generate the quiz result from the user
     """
 
-    global results
+    values: dict = get_results()
 
     quiz_obj: Quiz = Quiz.query.get_or_404(quiz_id)
-
-    LOGGER.debug(f"User: {quiz_obj.user_id} - Result: {final_result}")
-
-    LOGGER.info("Choose the number of questions and the subject")
-
-    form = SetForAQuizForm()
-
-    query = Question.query.with_entities(Question.subject).distinct()
-    subjects = [row.subject for row in query.all()]
-
-    form.subject.choices = subjects
-
-    if form.validate_on_submit():
-        LOGGER.info("Quiz form has been validated. Generate a quiz")
-
-        query = (
-            db.session.query(Question)
-            .filter(Question.subject == form.subject.data)
-            .order_by(func.random())
-            .limit(form.number_of_questions.data)
+    total_questions: int = len(quiz_obj.questions)
+    correct_questions: int = len(values.get("passes"))
+    points: float = values.get("points")
+    level_achieved: float = (correct_questions * 10) / total_questions
+    expertise_level = ""
+    if 0 <= level_achieved <= 2:
+        expertise_level = (
+            "You are Clueless: Don’t be discouraged!\nLearn some more about this topic, and come back" " to try again!"
         )
+    elif 2 < level_achieved <= 5:
+        expertise_level = (
+            "You are Beginner: This is the level most players end up with after answering this quiz for"
+            " the first time.\nLearn some more about this topic and come back to try again!"
+        )
+    elif 5 < level_achieved <= 8:
+        expertise_level = (
+            "You are Confident: This is the level players are getting pro!\nContinue your progress and" " rock it!"
+        )
+    else:
+        expertise_level = "Expert: This is the highest level achievable!\nThanks for being awesome as you are!"
 
-        LOGGER.debug(f"QUERY: {query.all()}")
-        quiz = Quiz(questions=query.all(), user_id=current_user.id)
-        try:
-            # add quiz to the database
-            db.session.add(quiz)
-            db.session.commit()
-            flash(f"You have successfully added a new quiz for the user {current_user.id}.")
-        except Exception as error:
-            LOGGER.error(f"Exception: {error}")
-            flash("Error: There was an error and this question couldn't be added. Check each item and try again")
+    score = Score(
+        quiz_id=quiz_obj.id,
+        results=values,
+    )
 
-        # redirect to questions page
-        return redirect(url_for("user.solve_a_new_quiz", quiz_id=quiz.id, question_id=0))
+    try:
+        # add score to the database
+        db.session.add(score)
+        db.session.commit()
+        flash(f"You have successfully added the score for {current_user.id}.")
+    except Exception as error:
+        LOGGER.error(f"Exception: {error}")
+        flash("Error: There was an error and this score couldn't be added.")
 
-    results = 0
+    values = {"passes": [], "points": 0.0}
+    set_results(values)
 
-    LOGGER.debug(f"Result: {final_result}")
-    return render_template("home/index.html")
+    return render_template(
+        "quiz/result.html",
+        total=total_questions,
+        correct=correct_questions,
+        points=points,
+        expertise_level=expertise_level,
+    )

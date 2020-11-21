@@ -37,4 +37,4 @@ def dashboard():
     Render the dashboard template on the /dashboard route
     """
 
-    return render_template("home/dashboard.html", title="Dashboard")
+    return render_template("home/score.html", title="Dashboard")
