@@ -16,7 +16,7 @@
                 let timerCounter = progressBar.max;
                 const interval = setInterval(() => {
                     if (timerCounter <= 1) {
-                        window.location.href = "{{ url_for("user.solve_a_quiz", quiz_id=quiz_id, times_up=0, question_id=question_id + 1) }}";
+                        window.location.href = "{{ url_for("user.solve_a_new_quiz", quiz_id=quiz_id, times_up=0, question_id=question_id + 1) }}";
                         clearInterval(interval);
                     }
 

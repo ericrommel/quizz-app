@@ -3,9 +3,12 @@
 {% extends "base.html" %}
 {% block title %} Sign In {% endblock %}
 {% block body %}
+<script type="text/javascript">
+  window.setTimeout("document.getElementById('flash-message').style.display='none';", 2500);
+</script>
 <div class="content-section">
   <br/>
-  {{ utils.flashed_messages() }}
+  <div id="flash-message">{{ utils.flashed_messages() }} </div>
   <br/>
   <div class="center">
     <h1>Sign in to access your account</h1>

@@ -28,8 +28,7 @@ class Score(db.Model):
     __tablename__ = "scores"
     id = db.Column(db.Integer, primary_key=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey("quizzes.id"))
-    time_for_execution = db.Column(DateTime(timezone=True))
-    attempts = db.Column(db.Integer)
+    results = db.Column(PickleType)
 
 
 class Quiz(db.Model):

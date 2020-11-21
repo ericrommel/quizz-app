@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 03a492fd63bd
+Revision ID: 041652e9f19f
 Revises:
-Create Date: 2020-11-19 21:12:31.693348
+Create Date: 2020-11-21 12:19:51.000192
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "03a492fd63bd"
+revision = "041652e9f19f"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,7 +31,7 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_questions_correct_answer"), "questions", ["correct_answer"], unique=False)
-    op.create_index(op.f("ix_questions_description"), "questions", ["description"], unique=False)
+    op.create_index(op.f("ix_questions_description"), "questions", ["description"], unique=True)
     op.create_index(op.f("ix_questions_false_answer_1"), "questions", ["false_answer_1"], unique=False)
     op.create_index(op.f("ix_questions_false_answer_2"), "questions", ["false_answer_2"], unique=False)
     op.create_index(op.f("ix_questions_false_answer_3"), "questions", ["false_answer_3"], unique=False)
@@ -86,7 +86,7 @@ def upgrade():
         "scores",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("quiz_id", sa.Integer(), nullable=True),
-        sa.Column("time_for_execution", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("results", sa.PickleType(), nullable=True),
         sa.Column("attempts", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["quiz_id"],
