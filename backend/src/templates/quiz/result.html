@@ -8,19 +8,21 @@
                 <div class="intro-message">
                     <h1>Your score: {{ correct }}/{{ total }} ({{ points }} points)</h1>
                     <h3>{{ expertise_level }}</h3>
+                    <br/>
                     <a href="{{ url_for('home.homepage') }}" class="btn btn-default btn-lg">
                         <i class="fa fa-home"></i>
                         Back to Home
-                    </a><br/>
-                    <a href="{{ url_for('user.dashboard') }}" class="btn btn-default btn-lg">
+                    </a>
+                    <a href="{{ url_for('user.dashboard', user_id=user) }}" class="btn btn-default btn-lg">
                         <i class="fa fa-dashboard"></i>
                         Go to your dashboard
-                    </a><br/>
+                    </a>
 
                     <a href="{{ url_for('user.generate_a_quiz') }}" class="btn btn-default btn-lg">
                         <i class="fa fa-play"></i>
                         Play again
                     </a><br/>
+
                     <hr class="intro-divider">
                 </div>
             </div>

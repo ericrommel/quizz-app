@@ -1,5 +1,6 @@
-from flask import abort, render_template
+from flask import abort, render_template, url_for
 from flask_login import current_user, login_required
+from werkzeug.utils import redirect
 
 from . import home
 from .. import LOGGER
@@ -37,4 +38,4 @@ def dashboard():
     Render the dashboard template on the /dashboard route
     """
 
-    return render_template("home/score.html", title="Dashboard")
+    return redirect(url_for("user.dashboard", user_id=current_user.id))

@@ -2,7 +2,7 @@ import random
 
 from flask import flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
-from sqlalchemy import func
+from sqlalchemy import func, desc
 
 from . import user
 from .forms import UserForm, SetForAQuizForm, SolveQuizForm
@@ -84,11 +84,15 @@ def generate_a_quiz():
     Generate a quiz to solve
     """
 
-    LOGGER.info("Choose the number of questions and the subject")
-
     form = SetForAQuizForm()
 
     query: Question = Question.query.with_entities(Question.subject).distinct()
+    if not query.all():
+        LOGGER.info("There is no question yet")
+        return render_template("quiz/set-quiz.html", empty=True, form=form, title="Choose your challenge")
+
+    LOGGER.info("Choose the number of questions and the subject")
+
     subjects = [row.subject for row in query.all()]
 
     form.subject.choices = subjects
@@ -114,14 +118,14 @@ def generate_a_quiz():
             flash("Error: There was an error and this question couldn't be added. Check each item and try again")
 
         # redirect to questions page
-        return redirect(url_for("user.solve_a_new_quiz", quiz_id=quiz.id, question_id=0))
+        return redirect(url_for("user.solve_a_new_quiz", user_id=quiz.user_id, quiz_id=quiz.id, question_id=0))
 
     return render_template("quiz/set-quiz.html", form=form, title="Choose your challenge")
 
 
-@user.route("/users/quizzes/<int:quiz_id>/question/<int:question_id>", methods=["GET", "POST"])
+@user.route("/users/<int:user_id>/quizzes/<int:quiz_id>/question/<int:question_id>", methods=["GET", "POST"])
 @login_required
-def solve_a_new_quiz(quiz_id, question_id):
+def solve_a_new_quiz(user_id, quiz_id, question_id):
     """
     Generate a quiz to solve
     """
@@ -139,7 +143,7 @@ def solve_a_new_quiz(quiz_id, question_id):
     if len(questions) == question_id:
         values["points"] = round(values["points"] / float(len(questions)), 2)
         set_results(values)
-        return redirect(url_for("user.quiz_result", quiz_id=quiz_id))
+        return redirect(url_for("user.quiz_result", user_id=quiz_obj.user_id, quiz_id=quiz_obj.id))
 
     choices = [
         questions[question_id].correct_answer,
@@ -161,21 +165,22 @@ def solve_a_new_quiz(quiz_id, question_id):
             set_results(values)
 
         question_id += 1
-        return redirect(url_for("user.solve_a_new_quiz", quiz_id=quiz_id, question_id=question_id))
+        return redirect(url_for("user.solve_a_new_quiz", user_id=user_id, quiz_id=quiz_id, question_id=question_id))
 
     return render_template(
         "quiz/quiz.html",
         question=questions[question_id],
-        quiz_id=quiz_id,
+        quiz_id=quiz_obj.id,
+        user_id=quiz_obj.user_id,
         question_id=question_id,
         form=form,
         title=f"Question {question_id+1}",
     )
 
 
-@user.route("/users/quizzes/<int:quiz_id>/results", methods=["GET", "POST"])
+@user.route("/users/<int:user_id>/quizzes/<int:quiz_id>/results", methods=["GET", "POST"])
 @login_required
-def quiz_result(quiz_id):
+def quiz_result(user_id, quiz_id):
     """
     Generate the quiz result from the user
     """
@@ -204,16 +209,13 @@ def quiz_result(quiz_id):
     else:
         expertise_level = "Expert: This is the highest level achievable!\nThanks for being awesome as you are!"
 
-    score = Score(
-        quiz_id=quiz_obj.id,
-        results=values,
-    )
+    score = Score(user_id=user_id, passes=values.get("passes"), points=values.get("points"))
 
     try:
         # add score to the database
         db.session.add(score)
         db.session.commit()
-        flash(f"You have successfully added the score for {current_user.id}.")
+        flash(f"You have successfully added the score for {user_id}.")
     except Exception as error:
         LOGGER.error(f"Exception: {error}")
         flash("Error: There was an error and this score couldn't be added.")
@@ -223,8 +225,55 @@ def quiz_result(quiz_id):
 
     return render_template(
         "quiz/result.html",
+        user=user_id,
         total=total_questions,
         correct=correct_questions,
         points=points,
         expertise_level=expertise_level,
+    )
+
+
+@user.route("/users/<int:user_id>/dashboard", methods=["GET", "POST"])
+@login_required
+def dashboard(user_id):
+    """
+    Generate the user's dashboard
+    """
+
+    user_obj: User = User.query.get_or_404(user_id)
+
+    LOGGER.info("Get the the better result made by the user")
+    user_score: Score = (
+        db.session.query(Score).filter(Score.user_id == user_obj.id).order_by(desc(Score.points)).limit(1)
+    )
+
+    LOGGER.info("Get the 10 highest positions in the ranking")
+    score_list = (
+        db.session.query(User.username, Score.points)
+        .join(Score, User.id == Score.user_id)
+        .order_by(desc(Score.points))
+        .limit(10)
+    )
+
+    LOGGER.debug(f"Score list: {score_list.all()}")
+
+    if not user_score.all():
+        return render_template(
+            "home/dashboard.html",
+            no_result_yet=True,
+            first_10=score_list.all(),
+            title="Dashboard",
+        )
+
+    LOGGER.info("Get the user position in the general ranking")
+    sub = db.session.query(Score.user_id, func.row_number().over(order_by=desc(Score.points)).label("pos")).subquery()
+    user_position = [position for position in db.session.query(sub.c.pos).filter(sub.c.user_id == user_id).first()]
+
+    return render_template(
+        "home/dashboard.html",
+        no_result_yet=False,
+        user_score=user_score.all()[0].points,
+        user_position=user_position[0],
+        first_10=score_list.all(),
+        title="Dashboard",
     )
