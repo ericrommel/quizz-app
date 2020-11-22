@@ -27,8 +27,9 @@ class Score(db.Model):
 
     __tablename__ = "scores"
     id = db.Column(db.Integer, primary_key=True)
-    quiz_id = db.Column(db.Integer, db.ForeignKey("quizzes.id"))
-    results = db.Column(PickleType)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    passes = db.Column(PickleType)
+    points = db.Column(db.Float)
 
 
 class Quiz(db.Model):
@@ -41,8 +42,6 @@ class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     questions = db.Column(MutableList.as_mutable(PickleType), default=[])
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    first_execution = db.Column(DateTime(timezone=True), server_default=func.now())
-    next_execution = db.Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class Question(db.Model):

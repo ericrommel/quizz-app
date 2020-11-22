@@ -61,7 +61,7 @@ def login():
     Log an users in through the sign in form
     """
 
-    LOGGER.debug("Try sign in")
+    LOGGER.info("Try sign in at the system")
     req = request.get_json() if request.get_json() else request.form
 
     form = LoginForm()
@@ -71,7 +71,7 @@ def login():
         # Check if the users exists in the DB and if the password entered matches the password in the DB
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.check_password(form.password.data):
-            LOGGER.debug("Login successful")
+            LOGGER.info("Login successful")
             # Log user in
             login_user(user)
 
@@ -79,7 +79,7 @@ def login():
             if user.is_admin:
                 return redirect(url_for("home.admin_dashboard"))  # ToDo: Create an admin dashboard
             else:
-                return redirect(url_for("home.dashboard"))  # ToDo: Create a user dashboard
+                return redirect(url_for("home.dashboard"))
         # When login details are incorrect
         else:
             flash("Invalid email or password.")

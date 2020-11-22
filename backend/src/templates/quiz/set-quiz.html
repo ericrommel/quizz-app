@@ -7,10 +7,15 @@
     <div class="middle">
       <div class="inner">
         <div class="center">
+            {% if empty %}
+            <h1> Sorry! There is no question in the database </h1>
+            <h3> No worries! An admin will add questions soon. Came back later and try again! </h3>
+            {% else %}
             <h1> Challenge yourself </h1>
             <h3> After click on the generate button, the time to solve will start. Be prepared! </h3>
             <br/>
             {{ wtf.quick_form(form) }}
+            {% endif %}
         </div>
       </div>
     </div>

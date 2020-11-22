@@ -6,7 +6,7 @@
  <div class="outer">
     <div class="middle">
       <div class="inner">
-        <div class="center">
+          <div class="center">
             <div id="countdown"></div>
             <span class="timer" id="timer">15s</span>
             <progress value="15" max="15" id="progressBar" class="progress progress--countdown"></progress>
@@ -16,7 +16,7 @@
                 let timerCounter = progressBar.max;
                 const interval = setInterval(() => {
                     if (timerCounter <= 1) {
-                        window.location.href = "{{ url_for("user.solve_a_new_quiz", quiz_id=quiz_id, times_up=0, question_id=question_id + 1) }}";
+                        window.location.href = "{{ url_for("user.solve_a_new_quiz", user_id=user_id, quiz_id=quiz_id, times_up=0, question_id=question_id + 1) }}";
                         clearInterval(interval);
                     }
 
