@@ -1,0 +1,47 @@
+[
+    {
+        "Subject": "Geography",
+        "QuestionText": "What country has the longest coastline in the world?",
+        "Answer": "Canada",
+        "False1": "Brazil",
+        "False2": "USA",
+        "False3": "Japan",
+        "Level": "Easy"
+    },
+    {
+        "Subject": "Geography",
+        "QuestionText": "What country is Beirut the capital of?",
+        "Answer": "Lebanon",
+        "False1": "Mezher",
+        "False2": "Jdeideh",
+        "False3": "Baghdad",
+        "Level": "Easy"
+    },
+    {
+        "Subject": "Geography",
+        "QuestionText": "How many members are there in the U.S. Senate?",
+        "Answer": 100.0,
+        "False1": 20.0,
+        "False2": 50.0,
+        "False3": 200.0,
+        "Level": "Easy"
+    },
+    {
+        "Subject": "Geography",
+        "QuestionText": "What is the American state with the fewest counties?",
+        "Answer": "Delaware",
+        "False1": "Rhode Island",
+        "False2": "Maine",
+        "False3": "Utah",
+        "Level": "Easy"
+    },
+    {
+        "Subject": "Geography",
+        "QuestionText": "Which American state has the most interstate highway kilometers?",
+        "Answer": "Texas",
+        "False1": "Montana",
+        "False2": "New York",
+        "False3": "California",
+        "Level": "Easy"
+    }
+]
