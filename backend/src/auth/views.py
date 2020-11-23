@@ -46,7 +46,7 @@ def signup():
         flash("You have successfully registered! You may now login.")
 
         # redirect to the login page
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth.login"), 201)
     elif request.method == "GET":
         # load registration template
         return render_template("auth/register.html", form=form, title="Sign Up")
@@ -61,7 +61,7 @@ def login():
     Log an users in through the sign in form
     """
 
-    LOGGER.info("Try sign in at the system")
+    LOGGER.info("Try to sign in the system")
     req = request.get_json() if request.get_json() else request.form
 
     form = LoginForm()

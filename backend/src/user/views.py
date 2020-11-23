@@ -36,7 +36,7 @@ def user_details():
 
 @user.route("/users/edit/<int:id>", methods=["GET", "POST"])
 @login_required
-def edit_user(id):
+def edit_users(id):
     """
     Edit a user
     """
@@ -254,8 +254,6 @@ def dashboard(user_id):
         .order_by(desc(Score.points))
         .limit(10)
     )
-
-    LOGGER.debug(f"Score list: {score_list.all()}")
 
     if not user_score.all():
         return render_template(

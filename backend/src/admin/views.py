@@ -255,7 +255,7 @@ def list_users():
 
 @admin.route("/admin/users/edit/<int:id>", methods=["GET", "POST"])
 @login_required
-def edit_user(id):
+def edit_users(id):
     """
     Edit a user
     """
