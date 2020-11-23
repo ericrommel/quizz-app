@@ -12,3 +12,8 @@ matrix:
             - black --line-length 120 --check . backend/src/
             - flake8
             - pre-commit run --all-files
+            - pytest
+            - coverage erase
+            - coverage run -m pytest && coverage html
+          after_success:
+            - bash <(curl -s https://codecov.io/bash)
