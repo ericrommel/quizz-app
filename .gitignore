@@ -111,3 +111,4 @@ venv.bak/
 
 # Windows specific settings for local debug by Heroku CLI
 Procfile.windows
+/envvars.txt
