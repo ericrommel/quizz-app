@@ -36,11 +36,6 @@ def test_login_user_admin_view(client, auth, captured_templates):
     assert "title" in context
     assert context["title"] == "Dashboard"
 
-    # Accessing context variables after the response
-    with client:
-        client.get("/")
-        assert session["_user_id"] == "2"
-
 
 def test_login_user_no_admin_view(client, auth, captured_templates):
     """

@@ -2,6 +2,7 @@ import json
 
 from flask import abort, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import auth
 from .. import db, LOGGER
@@ -41,8 +42,16 @@ def signup():
         )
 
         # add user to the database
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(403, f'Username "{user.username}" or email "{user.email}" already exist in the database.')
+        except Exception as error:
+            LOGGER.error(f"Exception: {error}")
+            abort(500, error)
+
         flash("You have successfully registered! You may now login.")
 
         # redirect to the login page

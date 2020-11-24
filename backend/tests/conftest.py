@@ -120,7 +120,7 @@ def app():
         db.session.commit()
 
         # Add and save 5 questions to database
-        with open("sample_5_questions.json") as fjson:
+        with open(Path(current_dir, "sample_5_questions.json")) as fjson:
             json_data = json.load(fjson)
             levels = {"Beginner": 1, "Easy": 1.5, "Normal": 2, "Hard": 2.5, "Very Hard": 3, "Fiendish": 5}
             for f in json_data:
