@@ -1,8 +1,9 @@
 import random
 
-from flask import flash, redirect, render_template, url_for
+from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func, desc
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import user
 from .forms import UserForm, SetForAQuizForm, SolveQuizForm
@@ -36,7 +37,7 @@ def user_details():
 
 @user.route("/users/edit/<int:id>", methods=["GET", "POST"])
 @login_required
-def edit_user(id):
+def edit_users(id):
     """
     Edit a user
     """
@@ -57,9 +58,12 @@ def edit_user(id):
             # edit user in the database
             db.session.commit()
             flash("You have successfully edited the user.")
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(403, f'Username "{user.username}" or email "{user.email}" already exist in the database.')
         except Exception as error:
             LOGGER.error(f"Exception: {error}")
-            flash("Error: There was an error and this user cannot be edited. Check each item and try again")
+            abort(500, error)
 
         # redirect to the user page
         return redirect(url_for("user.user_details"))
@@ -254,8 +258,6 @@ def dashboard(user_id):
         .order_by(desc(Score.points))
         .limit(10)
     )
-
-    LOGGER.debug(f"Score list: {score_list.all()}")
 
     if not user_score.all():
         return render_template(

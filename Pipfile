@@ -20,6 +20,9 @@ wtforms = "*"
 email-validator = "*"
 openpyxl = "*"
 xlrd = "*"
+pytest = "*"
+blinker = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.8"

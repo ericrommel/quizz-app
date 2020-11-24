@@ -1,12 +1,17 @@
 # A Quiz App
 ###### source: Exponential Ventures
+[![Build Status](https://travis-ci.com/ericrommel/quizz-app.svg?branch=master)](https://travis-ci.com/github/ericrommel/quizz-app)
+[![codecov](https://codecov.io/gh/ericrommel/quizz-app/branch/master/graph/badge.svg)](https://codecov.io/gh/ericrommel/quizz-app)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+
 
 Nowadays, it has become popular amongst internet users to spend some of their time
 testing their general knowledge through quizzes (and brag about it when they ace it). The idea
 is to design the prototype for a quiz app that is pleasant, engaging, and easy to use. In the end,
 we’ll inform the user about his performance and translate those results into a grade.
 
-## Requirements
+
+## Project Requirements
 
 1. Each question has only four possible answers, of which only one is correct.
 2. On top of showing the grade, show statistics on how the user’s answers compared to the
@@ -36,6 +41,125 @@ the database, so you will not need to create a signup page.
 improvement over time.
 4. Sign up page for new users.
 5. Testing coverage - Testing is highly encouraged as a bonus feature
+
+
+## Technical Requirements
+
+These are the main tech requirement. The complete list is in requirements.txt.
+- [Python 3](http://python.org/)
+- [Pip](https://pip.pypa.io/)
+- [Flask](https://flask.palletsprojects.com/)
+- [SQLite](http://sqlite.org/) (or any other supported database)
+
+These are optional but recommended.
+
+- [Black](http://black.readthedocs.io/)
+- [Codecov](http://codecov.io/)
+- [Flake8](http://flake8.pycqa.org/)
+- [Pipenv](http://pipenv.readthedocs.io)
+- [Pre-commit](http://pre-commit.com/)
+
+
+### Installing
+
+The default Git version is the master branch. ::
+
+    # clone the repository
+    ```shell
+    $ cd desired/path/
+    $ git clone git@github.com:ericrommel/quizz-app.git/
+    ```
+
+The next step is install the project's Python dependencies. Just like _Git_ if you still don't have it go to the [official site](http://python.org/) and get it done. You'll also need [Pip](https://pip.pypa.io/), same rules applies here. Another interesting tool that is not required but strongly recommended is [Pipenv](http://pipenv.readthedocs.io), it helps to manage dependencies and virtual environments.
+
+Installing with **Pip**:
+
+    ```shell
+    $ cd path/to/quiz-project
+    $ pip install -r requirements.txt
+    ```
+
+Installing with **Pipenv**:
+
+    ```shell
+    $ pip install --upgrade pipenv
+    $ cd path/to/quiz-project
+    $ pipenv sync -d
+    ```
+
+### Start Container
+
+Docker and docker-compose should be installed first. [Tutorial here](https://docs.docker.com/install/).
+At the repo root run:
+    ```shell
+    $ docker-compose up --build
+    ```
+
+Now you can use. Open http://127.0.0.1:5000 in a browser and enjoy!
+
+
+### Run
+If you want to run without docker, configure the application manually. This will require you to define a few variables and create the database.
+
+Note: The pipenv virtual environment should be done.
+
+Set the environment variables::
+
+    ```shell
+    $ export FLASK_APP=backend/run
+    $ export FLASK_ENV=development
+    $ export FLASK_CONFIG=development
+    ```
+
+Or on Windows cmd::
+    ```shell
+    > set FLASK_APP=src
+    > set FLASK_ENV=development
+    > set FLASK_CONFIG=development
+    ```
+Create the database::
+
+    ```shell
+    $ flask db init
+    $ flask db migrate
+    $ flask db upgrade
+    ```
+
+Run the application::
+
+    ```shell
+    $ flask run
+    ```
+
+Open http://127.0.0.1:5000 in a browser.
+
+Note: An *ADMIN* user should be add first. After that, you can add questions. Check the next section for more details.
+
+### Tests
+In order to support the manual and automated tests, two requests were create to help using [Postman](https://www.postman.com/).
+Feel free to use any other tool for API testing.
+1. Add admin user  # It will add a user that can add questions
+2. Add questions in bulk  # It will populate the database with questions
+
+From Postman::
+- Import the collection file: postman/
+- Import the environment file: postman/
+
+Note: You can see the sample file to add questions in the [static folder](https://github.com/ericrommel/quizz-app/blob/master/backend/src/static/sample_questions.xlsx). This template should be used to add questions by this request.
+
+From Python code tests (unit tests)::
+
+    ```shell
+    $ pytest
+    ```
+
+Run with coverage report::
+
+    ```shell
+    $ coverage run -m pytest
+    $ coverage report
+    $ coverage html  # open htmlcov/index.html in a browser
+    ```
 
 ## About
 

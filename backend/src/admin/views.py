@@ -4,6 +4,7 @@ from collections import OrderedDict
 import xlrd
 from flask import abort, flash, redirect, render_template, url_for, request
 from flask_login import current_user, login_required
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.utils import secure_filename
 
 from . import admin
@@ -110,9 +111,12 @@ def add_questions_bulk():
                 db.session.add(question)
                 db.session.commit()
                 flash("You have successfully added a new question.")
+            except SQLAlchemyError:
+                db.session.rollback()
+                abort(403, f"Question description already exists in the database ({question.description}).")
             except Exception as error:
                 LOGGER.error(f"Exception: {error}")
-                flash("Error: There was an error and this question couldn't be added. Check each item and try again")
+                abort(500, error)
 
         return {"message": "The questions have successfully been imported."}, 201
 
@@ -150,9 +154,12 @@ def add_question():
             db.session.add(question)
             db.session.commit()
             flash("You have successfully added a new question.")
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(403, f"Question description already exists in the database ({question.description}).")
         except Exception as error:
             LOGGER.error(f"Exception: {error}")
-            flash("Error: There was an error and this question couldn't be added. Check each item and try again")
+            abort(500, error)
 
         # redirect to questions page
         return redirect(url_for("admin.list_questions"))
@@ -195,9 +202,12 @@ def edit_question(id):
             # edit question in the database
             db.session.commit()
             flash("You have successfully edited the question.")
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(403, f"Question description already exists in the database ({question.description}).")
         except Exception as error:
             LOGGER.error(f"Exception: {error}")
-            flash("Error: There was an error and this question couldn't be edited. Check each item and try again")
+            abort(500, error)
 
         # redirect to the questions page
         return redirect(url_for("admin.list_questions"))
@@ -255,7 +265,7 @@ def list_users():
 
 @admin.route("/admin/users/edit/<int:id>", methods=["GET", "POST"])
 @login_required
-def edit_user(id):
+def edit_users(id):
     """
     Edit a user
     """
@@ -278,9 +288,12 @@ def edit_user(id):
             # edit user in the database
             db.session.commit()
             flash("You have successfully edited the user.")
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(403, f'Username "{user.username}" or email "{user.email}" already exist in the database.')
         except Exception as error:
             LOGGER.error(f"Exception: {error}")
-            flash("Error: There was an error and this user couldn't be edited. Check each item and try again")
+            abort(500, error)
 
         # redirect to the users page
         return redirect(url_for("admin.list_users"))

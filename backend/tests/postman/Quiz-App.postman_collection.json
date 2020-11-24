@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "c40ed239-361f-426e-9ec4-dd97502fe586",
+		"name": "Quiz-App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sign up (an admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a0bb4615-cee8-4c4f-9c86-4700a9a44cca",
+						"exec": [
+							"pm.test(\"Response code is 201\", function() {\r",
+							"    pm.expect(pm.response).to.have.property('code', 201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response status is Created\", function() {\r",
+							"    pm.expect(pm.response).to.have.property('status', 'CREATED');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "086e66ef-21b9-4f0d-b3e2-2705cb1900ab",
+						"exec": [
+							"// Email generator\r",
+							"randomEmail = Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);\r",
+							"\r",
+							"pm.environment.set('adminUsername', randomEmail);\r",
+							"\r",
+							"randomEmail += \"@email.com\"\r",
+							"pm.environment.set(\"adminEmail\", randomEmail);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{adminEmail}}\",\r\n    \"username\": \"{{adminUsername}}\",\r\n    \"fullname\": \"{{$randomFullName}}\",\r\n    \"password\": \"123456\",\r\n    \"is_admin\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api}}/signup",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log in (an admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d33f382d-e234-4676-965c-d49d615d4ed6",
+						"exec": [
+							"pm.test(\"Response code is 200\", function() {\r",
+							"    pm.expect(pm.response).to.have.property('code', 200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response status is OK\", function() {\r",
+							"    pm.expect(pm.response).to.have.property('status', 'OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "{{adminEmail}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api}}/login",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add questions in Bulk",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f4e5600c-13e6-4db8-817c-1f82ddde184f",
+						"exec": [
+							"pm.test(\"Response code is 201\", function() {\r",
+							"    pm.expect(pm.response).to.have.property('code', 201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response status is CREATED\", function() {\r",
+							"    pm.expect(pm.response).to.have.property('status', 'CREATED');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "72241005-86cb-4bec-994a-a61381ab400f",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "xlsx_upload",
+							"type": "file",
+							"src": "/D:/repos/pessoal/projects/quizz-app/backend/src/static/sample_questions.xlsx"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api}}/questions/bulk",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"questions",
+						"bulk"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
