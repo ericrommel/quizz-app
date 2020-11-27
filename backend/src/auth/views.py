@@ -17,28 +17,16 @@ def signup():
     Add a user to the database through the sign up form
     """
 
-    form = request.get_json() if request.get_json() else SignUpForm()
+    req = request.get_json() if request.get_json() else request.form
+    form = SignUpForm(obj=req)
 
     if request.method == "POST":
-        if not request.get_json():
-            if form.validate_on_submit():
-                form = json.loads(
-                    json.dumps(
-                        {
-                            "email": form.email.data,
-                            "username": form.username.data,
-                            "fullname": form.fullname.data,
-                            "password": form.password.data,
-                        }
-                    )
-                )
-
         user = User(
-            email=form.get("email"),
-            username=form.get("username"),
-            fullname=form.get("fullname"),
-            password=form.get("password"),
-            is_admin=form.get("is_admin", False),
+            email=req.get("email"),
+            username=req.get("username"),
+            fullname=req.get("fullname"),
+            password=req.get("password"),
+            is_admin=req.get("is_admin", False),
         )
 
         # add user to the database
