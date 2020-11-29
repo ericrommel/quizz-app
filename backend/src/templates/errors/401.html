@@ -6,8 +6,12 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="intro-message">
-                    <h1>Unauthorized client</h1>
-                    <h3>Error 401</h3>
+                    <h1>Error 401</h1>
+                    {% if error %}
+                    <h3>{{ error }}</h3>
+                    {% else %}
+                    <h3>Unauthorized client</h3>
+                    {% endif %}
                     <p><a href="{{ url_for('home.homepage') }}">Back to Home</a></p>
                     <hr class="intro-divider">
                 </div>
