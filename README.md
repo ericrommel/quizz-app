@@ -144,9 +144,13 @@ Run with coverage report::
 
 ### Kubernetes (K8s)
 
-The project is running on Google Cloud after k8s settings. You can check is accessing the link below in your browser:
+The project is running on Google Cloud after k8s settings. You can check the project on the Internet accessing the link
+below in your browser:
 
     http://35.205.34.26/
+
+The file quizz-app.yml contains the settings used.
+
 
 ## About
 
