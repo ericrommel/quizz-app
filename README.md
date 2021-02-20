@@ -65,35 +65,27 @@ These are optional but recommended.
 The default Git version is the master branch. ::
 
     # clone the repository
-    ```shell
     $ cd desired/path/
     $ git clone git@github.com:ericrommel/quizz-app.git/
-    ```
 
 The next step is install the project's Python dependencies. Just like _Git_ if you still don't have it go to the [official site](http://python.org/) and get it done. You'll also need [Pip](https://pip.pypa.io/), same rules applies here. Another interesting tool that is not required but strongly recommended is [Pipenv](http://pipenv.readthedocs.io), it helps to manage dependencies and virtual environments.
 
 Installing with **Pip**:
 
-    ```shell
     $ cd path/to/quiz-project
     $ pip install -r requirements.txt
-    ```
 
 Installing with **Pipenv**:
 
-    ```shell
     $ pip install --upgrade pipenv
     $ cd path/to/quiz-project
     $ pipenv sync -d
-    ```
 
 ### Start Container
 
 Docker and docker-compose should be installed first. [Tutorial here](https://docs.docker.com/install/).
 At the repo root run:
-    ```shell
     $ docker-compose up --build
-    ```
 
 Now you can use. Open http://127.0.0.1:5000 in a browser and enjoy!
 
@@ -105,31 +97,24 @@ Note: The pipenv virtual environment should be done.
 
 Set the environment variables::
 
-    ```shell
     $ export FLASK_APP=backend/run
     $ export FLASK_ENV=development
     $ export FLASK_CONFIG=development
-    ```
 
 Or on Windows cmd::
-    ```shell
     > set FLASK_APP=src
     > set FLASK_ENV=development
     > set FLASK_CONFIG=development
-    ```
+
 Create the database::
 
-    ```shell
     $ flask db init
     $ flask db migrate
     $ flask db upgrade
-    ```
 
 Run the application::
 
-    ```shell
     $ flask run
-    ```
 
 Open http://127.0.0.1:5000 in a browser.
 
@@ -149,17 +134,19 @@ Note: You can see the sample file to add questions in the [static folder](https:
 
 From Python code tests (unit tests)::
 
-    ```shell
     $ pytest
-    ```
 
 Run with coverage report::
 
-    ```shell
     $ coverage run -m pytest
     $ coverage report
     $ coverage html  # open htmlcov/index.html in a browser
-    ```
+
+### Kubernetes (K8s)
+
+The project is running on Google Cloud after k8s settings. You can check is accessing the link below in your browser:
+
+    http://35.205.34.26/
 
 ## About
 
